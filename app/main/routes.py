@@ -13,7 +13,3 @@ def login():
 @main_bp.route('/signup')
 def signup():
     return render_template('main/signup.html')
-
-@main_bp.route('/test')
-def test():
-    return render_template('base.html')
