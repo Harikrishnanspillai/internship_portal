@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Global Internship Portal{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Header / Navbar -->
+    <header>
+        <div class="container nav-container">
+            <div class="logo">
+                <a href="{{ url_for('main.index') }}">Global Internship Portal</a>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="{{ url_for('main.index') }}">Home</a></li>
+                    <li><a href="{{ url_for('main.login') }}">Login</a></li>
+                    <li><a href="{{ url_for('main.signup') }}">Signup</a></li>
+                    <li><a href="{{ url_for('student.dashboard') }}">Student</a></li>
+                    <li><a href="{{ url_for('mentor.dashboard') }}">Mentor</a></li>
+                    <li><a href="{{ url_for('admin.dashboard') }}">Admin</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© {{ current_year | default(2025) }} Global Internship & Exchange Portal</p>
+        </div>
+    </footer>
+</body>
+</html>

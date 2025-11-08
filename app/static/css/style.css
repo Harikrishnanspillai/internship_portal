@@ -1,0 +1,128 @@
+/* ====== Reset & Base ====== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #222;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ====== Layout ====== */
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* ====== Navbar ====== */
+header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e5e5;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+}
+
+.logo a {
+    text-decoration: none;
+    font-weight: 600;
+    color: #003366;
+    font-size: 1.2rem;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.2rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: #333;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+
+nav a:hover {
+    color: #0056b3;
+}
+
+/* ====== Content ====== */
+main {
+    flex: 1;
+    padding: 2rem 0;
+}
+
+h1, h2 {
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: #003366;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+/* ====== Footer ====== */
+footer {
+    background-color: #ffffff;
+    border-top: 1px solid #e5e5e5;
+    padding: 1rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* ====== Buttons & Forms ====== */
+button, .btn {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+button:hover, .btn:hover {
+    background-color: #003d80;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+form {
+    margin-top: 1rem;
+}
+
+/* ====== Utility ====== */
+.text-center {
+    text-align: center;
+}
+
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }

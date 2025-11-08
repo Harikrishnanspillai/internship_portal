@@ -1,2 +1,2 @@
-# internship_portal
+# Internship Portal
 SEM 3 DBMS project
