@@ -1,0 +1,6 @@
+__pycache__/
+app/__pycache__/
+app/main/__pycache__/
+app/student/__pycache__/
+app/mentor/__pycache__/
+app/admin/__pycache__/
