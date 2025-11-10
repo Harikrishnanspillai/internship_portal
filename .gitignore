@@ -4,3 +4,4 @@ app/main/__pycache__/
 app/student/__pycache__/
 app/mentor/__pycache__/
 app/admin/__pycache__/
+config.py
