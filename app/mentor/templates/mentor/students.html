@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Assigned Students{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Assigned Students</h2>
+
+    <table>
+        <tr>
+            <th>Student</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Program</th>
+            <th>Status</th>
+        </tr>
+
+        {% for s in students %}
+        <tr>
+            <td>{{ s.student_name }}</td>
+            <td>{{ s.student_email }}</td>
+            <td>{{ s.student_dept }}</td>
+            <td>{{ s.program_title }}</td>
+            <td>{{ s.application_status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

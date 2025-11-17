@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Welcome, {{ info.name }}</h2>
+
+    <p><strong>Department:</strong> {{ info.department }}</p>
+    <p><strong>CGPA:</strong> {{ info.cgpa }}</p>
+
+    <h3 class="mt-2">Applications</h3>
+    <p>Total applications: {{ app_count }}</p>
+
+    <div class="mt-2">
+        <a class="btn" href="{{ url_for('student.programs') }}">View Programs</a>
+        <a class="btn" href="{{ url_for('student.profile') }}">Edit Profile</a>
+    </div>
+</div>
+{% endblock %}

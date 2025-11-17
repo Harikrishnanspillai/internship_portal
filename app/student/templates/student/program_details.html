@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Program Details{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>{{ program.title }}</h2>
+
+    <p><strong>University:</strong> {{ program.university }}</p>
+    <p><strong>Mentor:</strong> {{ program.mentor }}</p>
+    <p><strong>Duration:</strong> {{ program.duration }}</p>
+    <p><strong>Start:</strong> {{ program.start_date }}</p>
+    <p><strong>End:</strong> {{ program.end_date }}</p>
+
+    <h3>Description</h3>
+    <p>{{ program.description }}</p>
+
+    <h3>Eligibility</h3>
+    <p>{{ program.eligibility }}</p>
+
+    <a class="btn" href="{{ url_for('student.apply', pid=pid) }}">Apply</a>
+</div>
+{% endblock %}

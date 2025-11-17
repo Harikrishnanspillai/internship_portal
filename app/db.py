@@ -25,7 +25,7 @@ def init_db():
         student_id SERIAL PRIMARY KEY,
         name VARCHAR(120) NOT NULL,
         email VARCHAR(120) UNIQUE NOT NULL,
-        password VARCHAR(128) NOT NULL,
+        password VARCHAR(225) NOT NULL,
         dob DATE,
         department VARCHAR(100),
         cgpa NUMERIC(3,2),
@@ -39,7 +39,7 @@ def init_db():
         mentor_id SERIAL PRIMARY KEY,
         name VARCHAR(120) NOT NULL,
         email VARCHAR(120) UNIQUE NOT NULL,
-        password VARCHAR(128) NOT NULL,
+        password VARCHAR(225) NOT NULL,
         department VARCHAR(100),
         university_id INT,
         FOREIGN KEY (university_id)
@@ -146,8 +146,9 @@ def init_db():
         admin_id SERIAL PRIMARY KEY,
         name VARCHAR(80) NOT NULL,
         email VARCHAR(120) UNIQUE NOT NULL,
-        password VARCHAR(128) NOT NULL
+        password VARCHAR(225) NOT NULL
     );
+
     """
     conn = get_conn()
     cur = conn.cursor()

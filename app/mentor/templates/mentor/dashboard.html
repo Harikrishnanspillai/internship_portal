@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Mentor Dashboard{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Welcome, {{ info.name }}</h2>
+
+    <p><strong>Department:</strong> {{ info.department }}</p>
+
+    <h3 class="mt-2">Overview</h3>
+    <p>Programs supervised: {{ program_count }}</p>
+    <p>Assigned students: {{ student_count }}</p>
+
+    <div class="mt-2">
+        <a class="btn" href="{{ url_for('mentor.students') }}">Assigned Students</a>
+        <a class="btn" href="{{ url_for('mentor.profile') }}">Profile</a>
+    </div>
+</div>
+{% endblock %}

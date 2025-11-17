@@ -6,8 +6,7 @@
     <title>{% block title %}Global Internship Portal{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <!-- Header / Navbar -->
+<body>  
     <header>
         <div class="container nav-container">
             <div class="logo">
@@ -15,14 +14,28 @@
             </div>
             <nav>
                 <ul class="nav-links">
-                    <li><a href="{{ url_for('main.index') }}">Home</a></li>
-                    <li><a href="{{ url_for('main.login') }}">Login</a></li>
-                    <li><a href="{{ url_for('main.signup') }}">Signup</a></li>
-                    <li><a href="{{ url_for('student.dashboard') }}">Student</a></li>
-                    <li><a href="{{ url_for('mentor.dashboard') }}">Mentor</a></li>
-                    <li><a href="{{ url_for('admin.dashboard') }}">Admin</a></li>
+
+                <li><a href="{{ url_for('main.index') }}" class="nav-item">Home</a></li>
+
+                {% if session.get('user_id') %}
+                    <!-- User logged in -->
+                    {% if session.get('role') == 'student' %}
+                        <li><a href="{{ url_for('student.dashboard') }}" class="nav-item">Student</a></li>
+                    {% elif session.get('role') == 'mentor' %}
+                        <li><a href="{{ url_for('mentor.dashboard') }}" class="nav-item">Mentor</a></li>
+                    {% elif session.get('role') == 'admin' %}
+                        <li><a href="{{ url_for('admin.dashboard') }}" class="nav-item">Admin</a></li>
+                    {% endif %}
+
+                    <li><a href="{{ url_for('main.logout') }}" class="nav-item">Logout</a></li>
+
+                {% else %}
+                    <!-- No one logged in -->
+                    <li><a href="{{ url_for('main.login') }}" class="nav-item">Login</a></li>
+                {% endif %}
                 </ul>
-            </nav>
+        </nav>
+
         </div>
     </header>
 

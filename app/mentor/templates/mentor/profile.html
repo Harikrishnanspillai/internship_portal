@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Mentor Profile{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>My Profile</h2>
+
+    <form method="POST" action="{{ url_for('mentor.update_profile') }}">
+
+        <label>Name</label>
+        <input type="text" name="name" value="{{ data.name }}" required>
+
+        <label>Email (readonly)</label>
+        <input type="email" value="{{ data.email }}" readonly>
+
+        <label>Department</label>
+        <input type="text" name="department" value="{{ data.department }}">
+
+        <button class="btn mt-2" type="submit">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Manage Students{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Students</h2>
+
+    <table>
+        <tr>
+            <th>ID</th><th>Name</th><th>Email</th><th>Dept</th><th>CGPA</th><th></th>
+        </tr>
+
+        {% for s in data %}
+        <tr>
+            <td>{{ s.student_id }}</td>
+            <td>{{ s.name }}</td>
+            <td>{{ s.email }}</td>
+            <td>{{ s.department }}</td>
+            <td>{{ s.cgpa }}</td>
+            <td>
+                <a class="btn del" href="{{ url_for('admin.delete_student', sid=s.student_id) }}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

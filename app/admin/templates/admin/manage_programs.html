@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Manage Programs{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Programs</h2>
+
+    <form method="POST" action="{{ url_for('admin.create_program') }}">
+        <label>Title</label>
+        <input type="text" name="title" required>
+
+        <label>University ID</label>
+        <input type="number" name="university_id" required>
+
+        <label>Mentor ID</label>
+        <input type="number" name="mentor_id" required>
+
+        <button class="btn" type="submit">Add Program</button>
+    </form>
+
+    <hr>
+
+    <table>
+        <tr>
+            <th>ID</th><th>Title</th><th>University</th><th>Mentor</th><th></th>
+        </tr>
+
+        {% for p in data %}
+        <tr>
+            <td>{{ p.program_id }}</td>
+            <td>{{ p.title }}</td>
+            <td>{{ p.university }}</td>
+            <td>{{ p.mentor }}</td>
+            <td>
+                <a class="btn del" href="{{ url_for('admin.delete_program', pid=p.program_id) }}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

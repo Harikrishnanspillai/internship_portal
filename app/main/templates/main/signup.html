@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Signup | Global Internship Portal{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>Student Signup</h2>
+
+  {% if error %}
+  <p class="error">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('main.signup') }}">
+    <label>Name</label>
+    <input type="text" name="name" required value="{{ form.name if form and form.name }}">
+
+    <label>Email</label>
+    <input type="email" name="email" required value="{{ form.email if form and form.email }}">
+
+    <label>Password</label>
+    <input type="password" name="password" required>
+
+    <label>Confirm Password</label>
+    <input type="password" name="confirm" required>
+
+    <div style="margin-top:.6rem;">
+      <button type="submit" class="btn">Create account</button>
+      <a style="margin-left:8px;" href="{{ url_for('main.login') }}">Already have an account?</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

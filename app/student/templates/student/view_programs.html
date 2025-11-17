@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Programs{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Available Programs</h2>
+
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>University</th>
+            <th>Mentor</th>
+            <th>Duration</th>
+            <th></th>
+        </tr>
+
+        {% for p in programs %}
+        <tr>
+            <td>{{ p.title }}</td>
+            <td>{{ p.university }}</td>
+            <td>{{ p.mentor }}</td>
+            <td>{{ p.duration }}</td>
+
+            <td>
+                <a class="btn" href="{{ url_for('student.program_details', pid=p.program_id) }}">
+                    View
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

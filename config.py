@@ -1,5 +1,6 @@
 DB_NAME = "internship_portal"
 DB_USER = "postgres"
-DB_PASS = "bleh"
+DB_PASS = "postgres"
 DB_HOST = "localhost"
 DB_PORT = 5432
+SECRET_KEY = "Throughout heaven and earth, I alone am the honored one."
