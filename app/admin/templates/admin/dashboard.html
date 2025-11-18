@@ -5,12 +5,27 @@
 <div class="card">
     <h2>Admin Dashboard</h2>
 
-    <p>Students: {{ students }}</p>
-    <p>Mentors: {{ mentors }}</p>
-    <p>Programs: {{ programs }}</p>
-    <p>Applications: {{ apps }}</p>
+    <h3>Overview</h3>
+    <p><strong>Students:</strong> {{ students }}</p>
+    <p><strong>Mentors:</strong> {{ mentors }}</p>
+    <p><strong>Programs:</strong> {{ programs }}</p>
+    <p><strong>Applications:</strong> {{ apps }}</p>
 
+    <hr>
+
+    <h3>Operational Status</h3>
+    <p><strong>Documents Pending Review:</strong> {{ docs_pending }}</p>
+    <p><strong>Visa Applications Pending:</strong> {{ visa_pending }}</p>
+    <p><strong>Housing Units Available:</strong> {{ housing_available }}</p>
+    <p><strong>Total Scholarships:</strong> {{ scholarship_count }}</p>
+
+    <hr>
+
+    <h3>Management Panels</h3>
     <a class="btn" href="{{ url_for('admin.manage_students') }}">Manage Students</a>
     <a class="btn" href="{{ url_for('admin.manage_programs') }}">Manage Programs</a>
+    <a class="btn" href="{{ url_for('admin.manage_scholarships') }}">Manage Scholarships</a>
+    <a class="btn" href="{{ url_for('admin.manage_housing') }}">Manage Housing</a>
+    <a class="btn" href="{{ url_for('admin.manage_visa') }}">Manage Visa</a>
 </div>
 {% endblock %}

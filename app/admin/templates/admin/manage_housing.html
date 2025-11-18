@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Manage Housing{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>Housing Listings</h2>
+
+  <form method="POST" action="{{ url_for('admin.create_housing') }}">
+    <label>University ID</label><input type="number" name="university_id" required>
+    <label>Location</label><input type="text" name="location" required>
+    <label>Room Type</label><input type="text" name="room_type" required>
+    <label>Rent</label><input type="number" step="0.01" name="rent">
+    <button class="btn" type="submit">Create Listing</button>
+  </form>
+
+  <hr>
+
+  <table>
+    <tr><th>ID</th><th>University</th><th>Location</th><th>Type</th><th>Rent</th><th>Available</th><th></th></tr>
+    {% for h in houses %}
+    <tr>
+      <td>{{ h.housing_id }}</td>
+      <td>{{ h.university }}</td>
+      <td>{{ h.location }}</td>
+      <td>{{ h.room_type }}</td>
+      <td>{{ h.rent }}</td>
+      <td>{{ h.availability }}</td>
+      <td>
+        <!-- quick assign form -->
+        <form method="post" action="{{ url_for('admin.assign_housing') }}">
+          <input type="hidden" name="housing_id" value="{{ h.housing_id }}">
+          <input type="number" name="student_id" placeholder="student_id" required>
+          <button class="btn" type="submit">Assign</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Housing Status{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>Housing Status</h2>
+  {% if assign %}
+    <p><strong>Location:</strong> {{ assign.location }}</p>
+    <p><strong>Room Type:</strong> {{ assign.room_type }}</p>
+    <p><strong>Rent:</strong> {{ assign.rent }}</p>
+    <p><strong>Allotted:</strong> {{ assign.allotment_date }}</p>
+    <p><strong>Checkout:</strong> {{ assign.checkout_date }}</p>
+  {% else %}
+    <p>No housing assigned yet.</p>
+  {% endif %}
+</div>
+{% endblock %}
