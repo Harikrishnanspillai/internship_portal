@@ -135,7 +135,7 @@ def create_program():
     title = request.form["title"]
     university_id = request.form["university_id"]
     mentor_id = request.form["mentor_id"]
-
+    p_type = request.form['p_type']
     description = request.form.get("description")
     eligibility = request.form.get("eligibility")
     duration = request.form.get("duration") or None
@@ -148,11 +148,11 @@ def create_program():
     cur.execute("""
         INSERT INTO Program
         (title, description, eligibility, duration, start_date, end_date,
-         university_id, mentor_id)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+         university_id, mentor_id, program_type)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         title, description, eligibility, duration,
-        start_date, end_date, university_id, mentor_id
+        start_date, end_date, university_id, mentor_id, p_type
     ))
 
     conn.commit()

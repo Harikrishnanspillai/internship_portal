@@ -55,7 +55,7 @@
             <td>{{ u.ranking }}</td>
             <td>{{ u.contact_email }}</td>
             <td>
-                <a href="{{ url_for('admin.delete_university', uid=u.university_id) }}"
+                <a class="btn del" href="{{ url_for('admin.delete_university', uid=u.university_id) }}"
                    onclick="return confirm('Delete this university?')">Delete</a>
             </td>
         </tr>
