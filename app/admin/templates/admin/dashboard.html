@@ -14,7 +14,6 @@
     <hr>
 
     <h3>Operational Status</h3>
-    <p><strong>Documents Pending Review:</strong> {{ docs_pending }}</p>
     <p><strong>Visa Applications Pending:</strong> {{ visa_pending }}</p>
     <p><strong>Housing Units Available:</strong> {{ housing_available }}</p>
     <p><strong>Total Scholarships:</strong> {{ scholarship_count }}</p>
@@ -22,10 +21,15 @@
     <hr>
 
     <h3>Management Panels</h3>
-    <a class="btn" href="{{ url_for('admin.manage_students') }}">Manage Students</a>
-    <a class="btn" href="{{ url_for('admin.manage_programs') }}">Manage Programs</a>
-    <a class="btn" href="{{ url_for('admin.manage_scholarships') }}">Manage Scholarships</a>
-    <a class="btn" href="{{ url_for('admin.manage_housing') }}">Manage Housing</a>
-    <a class="btn" href="{{ url_for('admin.manage_visa') }}">Manage Visa</a>
+    <a class="admin-btn" href="{{ url_for('admin.manage_students') }}">Manage Students</a>
+    <a class="admin-btn" href="{{ url_for('admin.manage_mentors') }}">Manage Mentors</a>
+    <a class="admin-btn" href="{{ url_for('admin.manage_universities') }}">Manage Universities</a>
+    <a class="admin-btn" href="{{ url_for('admin.manage_programs') }}">Manage Programs</a>
+    <a class="admin-btn" href="{{ url_for('admin.manage_scholarships') }}">Manage Scholarships</a>
+    <a class="admin-btn" href="{{ url_for('admin.manage_scholarship_applications') }}">Scholarship Applications</a>
+    <a class="admin-btn" href="{{ url_for('admin.manage_housing') }}">Manage Housing</a>
+    <a class="admin-btn" href="{{ url_for('admin.housing_requests') }}">Housing Applications</a>
+    <a class="admin-btn" href="{{ url_for('admin.manage_visa') }}">Visa Applications</a>
+
 </div>
 {% endblock %}

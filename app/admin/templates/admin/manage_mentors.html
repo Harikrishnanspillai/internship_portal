@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Manage Mentors</h2>
+<hr>
+
+<!-- Create New Mentor -->
+<form method="POST" action="{{ url_for('admin.create_mentor') }}" class="form-section">
+
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" required>
+    </div>
+
+    <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" required>
+    </div>
+
+    <div class="form-group">
+        <label>Password</label>
+        <input type="text" name="password" required>
+    </div>
+
+    <div class="form-group">
+        <label>Department</label>
+        <input type="text" name="department" required>
+    </div>
+
+    <div class="form-group">
+        <label>University ID</label>
+        <input type="number" name="university_id">
+    </div>
+
+    <button type="submit" class="btn-primary">Add Mentor</button>
+</form>
+
+<hr>
+
+<h3>Existing Mentors</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>University</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for m in data %}
+        <tr>
+            <td>{{ m.mentor_id }}</td>
+            <td>{{ m.name }}</td>
+            <td>{{ m.email }}</td>
+            <td>{{ m.department }}</td>
+            <td>{{ m.university }}</td>
+            <td>
+                <a href="{{ url_for('admin.delete_mentor', mid=m.mentor_id) }}"
+                   onclick="return confirm('Delete mentor {{ m.name }}?')">Delete</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6">No mentors found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

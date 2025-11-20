@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Scholarship Review{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Scholarship Requests</h2>
+
+    {% if sch %}
+    <table class="table">
+        <tr>
+            <th>Student</th>
+            <th>Program</th>
+            <th>Scholarship</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Decision</th>
+        </tr>
+
+        {% for s in sch %}
+        <tr>
+            <td>{{ s.student_name }}</td>
+            <td>{{ s.program_title }}</td>
+            <td>{{ s.scholarship }}</td>
+            <td>{{ s.amount }}</td>
+            <td>{{ s.status }}</td>
+            <td>
+                {% if s.status == 'Pending' %}
+                    <form method="POST"
+                          action="{{ url_for('mentor.decide_scholarship', sch_id=s.sch_app_id, action='approve') }}"
+                          style="display:inline;">
+                        <button class="btn">Approve</button>
+                    </form>
+
+                    <form method="POST"
+                          action="{{ url_for('mentor.decide_scholarship', sch_id=s.sch_app_id, action='reject') }}"
+                          style="display:inline;">
+                        <button class="btn del">Reject</button>
+                    </form>
+                {% else %}
+                    <strong>{{ s.status }}</strong>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No scholarship requests.</p>
+    {% endif %}
+</div>
+{% endblock %}

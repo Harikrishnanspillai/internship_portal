@@ -1,59 +1,65 @@
 {% extends "base.html" %}
-{% block title %}Student Dashboard{% endblock %}
-
 {% block content %}
+
+<h2>Welcome, {{ info.name }}</h2>
+<hr>
+
+<!-- Student Info -->
 <div class="card">
-    <h2>Welcome, {{ info.name }}</h2>
+    <h3>Profile Summary</h3>
+    <p><b>Department:</b> {{ info.department }}</p>
+    <p><b>CGPA:</b> {{ info.cgpa }}</p>
 
-    <p><strong>Department:</strong> {{ info.department }}</p>
-    <p><strong>CGPA:</strong> {{ info.cgpa }}</p>
+    <a href="{{ url_for('student.profile') }}" class="btn">Edit Profile</a>
+</div>
 
-    <h3 class="mt-2">Applications</h3>
+
+<!-- Applications -->
+<div class="card">
+    <h3>Applications</h3>
     <p>Total applications: {{ app_count }}</p>
 
-    <hr>
+    <a href="{{ url_for('student.programs') }}" class="btn">
+        Browse Programs
+    </a>
+</div>
 
-    <h3>Documents</h3>
-    {% if docs.total > 0 %}
-        <p>Total uploaded: {{ docs.total }}</p>
-        <p>Approved: {{ docs.approved }}</p>
-        <p>Pending: {{ docs.pending }}</p>
-        <p>Rejected: {{ docs.rejected }}</p>
-    {% else %}
-        <p>No documents uploaded.</p>
-    {% endif %}
-    <a class="btn" href="{{ url_for('student.upload_docs') }}">Upload Documents</a>
 
-    <hr>
-
+<!-- Visa -->
+<div class="card">
     <h3>Visa Status</h3>
+
     {% if visa %}
-        <p><strong>Country:</strong> {{ visa.country }}</p>
-        <p><strong>Status:</strong> {{ visa.application_status }}</p>
-        <p><strong>Issued:</strong> {{ visa.issued_date }}</p>
-        <p><strong>Expires:</strong> {{ visa.expiry_date }}</p>
+        <p><b>Country:</b> {{ visa.country }}</p>
+        <p><b>Status:</b> {{ visa.application_status }}</p>
+        <p><b>Issued:</b> {{ visa.issued_date or '-' }}</p>
+        <p><b>Expires:</b> {{ visa.expiry_date or '-' }}</p>
     {% else %}
-        <p>No visa application submitted.</p>
+        <p>No visa applications yet.</p>
     {% endif %}
-    <a class="btn" href="{{ url_for('student.visa_application') }}">Visa Application</a>
 
-    <hr>
+    <a href="{{ url_for('student.visa_applications') }}" class="btn">
+        Visa Application
+    </a>
+</div>
 
+
+<!-- Housing -->
+<div class="card">
     <h3>Housing Status</h3>
+
     {% if housing %}
-        <p><strong>Location:</strong> {{ housing.location }}</p>
-        <p><strong>Room Type:</strong> {{ housing.room_type }}</p>
-        <p><strong>Rent:</strong> {{ housing.rent }}</p>
-        <p><strong>Allotted:</strong> {{ housing.allotment_date }}</p>
+        <p><b>Location:</b> {{ housing.location }}</p>
+        <p><b>Room Type:</b> {{ housing.room_type }}</p>
+        <p><b>Rent:</b> {{ housing.rent }}</p>
+        <p><b>Allotted:</b> {{ housing.allotment_date }}</p>
     {% else %}
         <p>No housing assigned.</p>
     {% endif %}
-    <a class="btn" href="{{ url_for('student.housing_status') }}">View Housing</a>
 
-    <hr>
-
-    <a class="btn" href="{{ url_for('student.programs') }}">Browse Programs</a>
-    <a class="btn" href="{{ url_for('student.profile') }}">Edit Profile</a>
-
+    <a href="{{ url_for('student.housing') }}" class="btn">
+        View Housing
+    </a>
 </div>
+
 {% endblock %}

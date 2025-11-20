@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Program Requirements{% endblock %}
+
+{% block content %}
+<div class="card">
+
+    <h2>Requirements for: {{ program.title }}</h2>
+
+    <!-- Add requirement -->
+    <form method="POST" action="{{ url_for('admin.add_requirement', pid=pid) }}">
+        <label>Document Name</label>
+        <input type="text" name="document_name" required>
+        <button class="btn" type="submit">Add Requirement</button>
+    </form>
+
+    <hr>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Document Name</th>
+            <th></th>
+        </tr>
+
+        {% for r in requirements %}
+        <tr>
+            <td>{{ r.req_id }}</td>
+            <td>{{ r.document_name }}</td>
+            <td>
+                <a class="btn del"
+                   href="{{ url_for('admin.delete_requirement', pid=pid, req_id=r.req_id) }}">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3">No requirements added.</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+{% endblock %}

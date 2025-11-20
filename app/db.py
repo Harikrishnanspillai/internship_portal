@@ -92,18 +92,6 @@ def init_db():
             ON DELETE CASCADE
     );
 
-    CREATE TABLE IF NOT EXISTS Document (
-        document_id SERIAL PRIMARY KEY,
-        student_id INT NOT NULL,
-        file_name VARCHAR(255) NOT NULL,
-        file_type VARCHAR(50),
-        upload_date TIMESTAMP DEFAULT NOW(),
-        status VARCHAR(30) DEFAULT 'Pending',
-        FOREIGN KEY (student_id)
-            REFERENCES Student(student_id)
-            ON DELETE CASCADE
-    );
-
     CREATE TABLE IF NOT EXISTS VisaPermit (
         visa_id SERIAL PRIMARY KEY,
         student_id INT NOT NULL,
@@ -142,6 +130,18 @@ def init_db():
             ON DELETE CASCADE
     );
 
+    CREATE TABLE IF NOT EXISTS HousingRequest (
+        request_id SERIAL PRIMARY KEY,
+        student_id INT NOT NULL,
+        request_type VARCHAR(20) NOT NULL, -- 'apply' OR 'vacate'
+        status VARCHAR(20) DEFAULT 'Pending',
+        request_date TIMESTAMP DEFAULT NOW(),
+        FOREIGN KEY (student_id)
+            REFERENCES Student(student_id)
+            ON DELETE CASCADE
+    );
+
+
     CREATE TABLE IF NOT EXISTS Admin (
         admin_id SERIAL PRIMARY KEY,
         name VARCHAR(80) NOT NULL,
@@ -149,7 +149,72 @@ def init_db():
         password VARCHAR(225) NOT NULL
     );
 
+    -- Scholarship Applications (per program)
+    CREATE TABLE IF NOT EXISTS ScholarshipApplication (
+        sch_app_id SERIAL PRIMARY KEY,
+        application_id INT NOT NULL,
+        scholarship_id INT NOT NULL,
+        status VARCHAR(30) DEFAULT 'Pending',
+        UNIQUE (application_id, scholarship_id),
+        FOREIGN KEY (application_id)
+            REFERENCES Application(application_id)
+            ON DELETE CASCADE,
+        FOREIGN KEY (scholarship_id)
+            REFERENCES Scholarship(scholarship_id)
+            ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS RequiredDocuments (
+        req_id SERIAL PRIMARY KEY,
+        program_id INT NOT NULL,
+        document_name VARCHAR(255) NOT NULL,
+        FOREIGN KEY (program_id)
+            REFERENCES Program(program_id)
+            ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS ApplicationDocument (
+        app_doc_id SERIAL PRIMARY KEY,
+        application_id INT NOT NULL,
+        req_id INT NOT NULL,
+        file_name VARCHAR(255),
+        status VARCHAR(20) DEFAULT 'Pending',
+
+        CONSTRAINT unique_app_req UNIQUE (application_id, req_id),
+
+        FOREIGN KEY (application_id)
+            REFERENCES Application(application_id)
+            ON DELETE CASCADE,
+
+        FOREIGN KEY (req_id)
+            REFERENCES RequiredDocuments(req_id)
+            ON DELETE CASCADE
+    );
+
+    -- Seed data
+    INSERT INTO University (name, country, ranking, contact_email)
+    VALUES ('Amrita Vishwa Vidyapeetham', 'India', 5, 'info@amrita.edu')
+    ON CONFLICT DO NOTHING;
+
+    INSERT INTO Admin (name, email, password)
+    VALUES (
+        'System Admin',
+        'admin@portal.com',
+        'scrypt:32768:8:1$1kmyWq0yU0CHjzv0$d5750057ce306b78563c9374b181b4326e63c9cbb5eec657b7491ceda9dc79fbb1c848e9d48984d3cecf8c12d43e5463c5bd5d0ad8c886029fcf0b67b8ced1b0'
+    )
+    ON CONFLICT DO NOTHING;
+
+    INSERT INTO Mentor (name, email, password, department, university_id)
+    VALUES (
+        'Dr. Arvind Reddy',
+        'arvindr@university.com',
+        'scrypt:32768:8:1$ZJ7qb1Iyz8SU9uds$76f8db6c58ce7ba801ea260de6894d026daa59b8582311aeb9dcc5fc12d52a1c020980e21ea8c903d82b61bac6b0d0c06dce41a226e3ee7f83a209c100d38aff',
+        'Computer Science',
+        1
+    )
+    ON CONFLICT DO NOTHING;
     """
+
     conn = get_conn()
     cur = conn.cursor()
     cur.execute(schema)
@@ -157,3 +222,4 @@ def init_db():
     cur.close()
     conn.close()
     print("Database schema initialized successfully.")
+

@@ -1,41 +1,104 @@
 {% extends "base.html" %}
-{% block title %}Manage Programs{% endblock %}
-
 {% block content %}
-<div class="card">
-    <h2>Programs</h2>
 
-    <form method="POST" action="{{ url_for('admin.create_program') }}">
-        <label>Title</label>
+<h2>Manage Programs</h2>
+<hr>
+
+<!-- Create New Program -->
+<form method="POST" action="{{ url_for('admin.create_program') }}" class="form-section">
+
+    <div class="form-group">
+        <label>Program Title</label>
         <input type="text" name="title" required>
+    </div>
 
+    <div class="form-group">
         <label>University ID</label>
         <input type="number" name="university_id" required>
+    </div>
 
+    <div class="form-group">
         <label>Mentor ID</label>
         <input type="number" name="mentor_id" required>
+    </div>
 
-        <button class="btn" type="submit">Add Program</button>
-    </form>
+    <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" rows="3"></textarea>
+    </div>
 
-    <hr>
+    <div class="form-group">
+        <label>Eligibility</label>
+        <textarea name="eligibility" rows="3"></textarea>
+    </div>
 
-    <table>
+    <div class="form-group">
+        <label>Duration (weeks or months)</label>
+        <input type="number" name="duration">
+    </div>
+
+    <div class="form-group">
+        <label>Start Date</label>
+        <input type="date" name="start_date">
+    </div>
+
+    <div class="form-group">
+        <label>End Date</label>
+        <input type="date" name="end_date">
+    </div>
+
+    <button type="submit" class="btn-primary">Add Program</button>
+</form>
+
+
+<hr>
+
+<h3>Existing Programs</h3>
+
+<table class="table">
+    <thead>
         <tr>
-            <th>ID</th><th>Title</th><th>University</th><th>Mentor</th><th></th>
+            <th>ID</th>
+            <th>Program Title</th>
+            <th>University</th>
+            <th>Mentor</th>
+            <th>Duration</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Delete</th>
         </tr>
+    </thead>
 
+    <tbody>
         {% for p in data %}
         <tr>
             <td>{{ p.program_id }}</td>
             <td>{{ p.title }}</td>
             <td>{{ p.university }}</td>
             <td>{{ p.mentor }}</td>
+
+            <!-- NEW COLUMNS -->
+            <td>{{ p.duration or '-' }}</td>
+            <td>{{ p.start_date or '-' }}</td>
+            <td>{{ p.end_date or '-' }}</td>
             <td>
-                <a class="btn del" href="{{ url_for('admin.delete_program', pid=p.program_id) }}">Delete</a>
+                <a class="btn" href="{{ url_for('admin.manage_requirements', pid=p.program_id) }}">
+                    Requirements
+                </a>
+            </td>
+            <td>
+                <a href="{{ url_for('admin.delete_program', pid=p.program_id) }}"
+                   onclick="return confirm('Delete this program?')">
+                    Delete
+                </a>
             </td>
         </tr>
+        {% else %}
+        <tr>
+            <td colspan="8">No programs found.</td>
+        </tr>
         {% endfor %}
-    </table>
-</div>
+    </tbody>
+</table>
+
 {% endblock %}

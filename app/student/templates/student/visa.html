@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Visa Applications{% endblock %}
+
+{% block content %}
+<div class="card">
+
+    <h2>Visa Applications</h2>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+    <label>Country</label>
+    <select name="country" required>
+        {% for c in valid_countries %}
+            <option value="{{ c }}">{{ c }}</option>
+        {% endfor %}
+    </select>
+
+    <button class="btn-primary" type="submit">Submit Application</button>
+</form>
+
+
+    <hr>
+
+    <h3>My Visa History</h3>
+
+    {% if visas %}
+    <table>
+        <tr>
+            <th>Country</th>
+            <th>Status</th>
+            <th>Issued</th>
+            <th>Expiry</th>
+        </tr>
+
+        {% for v in visas %}
+        <tr>
+            <td>{{ v.country }}</td>
+            <td>{{ v.application_status }}</td>
+            <td>{{ v.issued_date or '-' }}</td>
+            <td>{{ v.expiry_date or '-' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No visa applications yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

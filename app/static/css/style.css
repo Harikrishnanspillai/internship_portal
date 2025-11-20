@@ -1,128 +1,399 @@
-/* ====== Reset & Base ====== */
+/* ============================================================
+   GLOBAL RESET
+   ============================================================ */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* ============================================================
+   BASE LAYOUT
+   ============================================================ */
 body {
-    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f8f9fa;
-    color: #222;
+    font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f4f6f9;
+    color: #1e1e1e;
     line-height: 1.6;
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
-/* ====== Layout ====== */
 .container {
-    width: 90%;
-    max-width: 1000px;
+    width: 92%;
+    max-width: 1100px;
     margin: 0 auto;
 }
 
-/* ====== Navbar ====== */
+/* ============================================================
+   NAVIGATION BAR
+   ============================================================ */
 header {
-    background-color: #ffffff;
-    border-bottom: 1px solid #e5e5e5;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    background: #ffffff;
+    border-bottom: 1px solid #dde1e7;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 
 .nav-container {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 0.8rem 0;
+    align-items: center;
+    padding: 0.85rem 0;
 }
 
 .logo a {
     text-decoration: none;
-    font-weight: 600;
-    color: #003366;
-    font-size: 1.2rem;
+    color: #003a80;
+    font-size: 1.3rem;
+    font-weight: 700;
 }
 
-nav ul {
-    list-style: none;
+.nav-links {
     display: flex;
-    gap: 1.2rem;
+    list-style: none;
+    gap: 1.4rem;
 }
 
-nav a {
+.nav-item {
     text-decoration: none;
     color: #333;
-    font-size: 0.95rem;
-    transition: color 0.2s ease;
+    font-weight: 500;
+    transition: color .2s ease;
 }
 
-nav a:hover {
-    color: #0056b3;
+.nav-item:hover {
+    color: #0056d6;
 }
 
-/* ====== Content ====== */
+/* ============================================================
+   MAIN
+   ============================================================ */
 main {
     flex: 1;
     padding: 2rem 0;
 }
 
+/* ============================================================
+   HEADERS / TYPOGRAPHY
+   ============================================================ */
 h1, h2 {
+    color: #003a80;
+    font-weight: 700;
     margin-bottom: 1rem;
+}
+
+h3 {
+    color: #003a80;
     font-weight: 600;
-    color: #003366;
+    margin-bottom: .7rem;
 }
 
-p {
-    margin-bottom: 1rem;
+/* ============================================================
+   CARD COMPONENT
+   ============================================================ */
+.card {
+    background: #ffffff;
+    padding: 1.6rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    margin-bottom: 2rem;
 }
 
-/* ====== Footer ====== */
-footer {
-    background-color: #ffffff;
-    border-top: 1px solid #e5e5e5;
-    padding: 1rem 0;
+/* ============================================================
+   TABLES
+   ============================================================ */
+table, .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.table th, table th {
+    text-align: left;
+    padding: 10px;
+    background: #ebeff5;
+    color: #003a80;
+    font-weight: 600;
+    border-bottom: 2px solid #d5dbe3;
+}
+
+.table td, table td {
+    padding: 10px;
+    border-bottom: 1px solid #e4e7ec;
+}
+
+.table tr:hover {
+    background: #f7f9fc;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+/* ===== IMPROVED BUTTONS ===== */
+
+.btn,
+button {
+    display: inline-block;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    border: none;
+    background: #0057b7;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
     text-align: center;
-    font-size: 0.9rem;
-    color: #555;
 }
 
-/* ====== Buttons & Forms ====== */
-button, .btn {
+.btn:hover,
+button:hover {
+    background: #004999;
+}
+
+.btn:active,
+button:active {
+    transform: scale(0.97);
+}
+
+.btn-primary {
+    background: #0066cc;
+    padding: 12px 20px;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background: #0051a3;
+}
+
+.btn.del {
+    background: #c62828;
+}
+
+.btn.del:hover {
+    background: #a61e1e;
+}
+
+/* ===== BUTTON LAYOUT FIX ===== */
+
+.btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* ===== CARD SPACING IMPROVED ===== */
+.card {
+    padding: 1.6rem;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    margin-bottom: 1.5rem;
+}
+
+
+.btn:hover,
+button:hover {
+    background: #003e9e;
+}
+
+.btn-primary {
+    background: #0067ff;
+}
+
+.btn-primary:hover {
+    background: #004ec1;
+}
+
+.btn.del {
+    background: #d33131;
+}
+
+.btn.del:hover {
+    background: #a72020;
+}
+
+/* Fix anchor buttons blowing up */
+a.btn,
+button.btn {
+    display: inline-block;
+    width: auto;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    border-radius: 4px;
+    background: #0057b7;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* Hover */
+a.btn:hover,
+button.btn:hover {
+    background: #004999;
+}
+
+/* Primary button for big actions */
+.btn-primary {
+    display: inline-block;
+    padding: 10px 18px;
+    font-weight: 600;
+    background: #0066cc;
+    width: auto;
+}
+
+/* Danger variant */
+.btn.del {
+    background: #c62828;
+}
+
+.btn.del:hover {
+    background: #a61e1e;
+}
+
+/* Ensure buttons never stretch to card width */
+.card a.btn,
+.card button.btn {
+    width: auto !important;
+    display: inline-block !important;
+}
+
+.admin-btn {
+    display: inline-block;
     background-color: #0056b3;
     color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
+    padding: 10px 18px;      /* Bigger button */
+    margin: 6px 6px 0 0;     /* Space between buttons */
+    border-radius: 6px;      /* Slightly rounder */
+    text-decoration: none;
+    font-size: 0.95rem;
     transition: background 0.2s ease;
 }
 
-button:hover, .btn:hover {
+.admin-btn:hover {
     background-color: #003d80;
 }
 
+
+/* ============================================================
+   FORMS
+   ============================================================ */
 input[type="text"],
 input[type="email"],
 input[type="password"],
+input[type="number"],
+input[type="date"],
 select,
 textarea {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid #cfd6df;
+    border-radius: 6px;
+    padding: 0.55rem;
     margin-bottom: 1rem;
-    font-size: 0.95rem;
+    font-size: .95rem;
+    background: #fff;
+}
+
+label {
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+    color: #003a80;
 }
 
 form {
     margin-top: 1rem;
 }
 
-/* ====== Utility ====== */
-.text-center {
+/* Two-column forms */
+.form-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+/* ============================================================
+   BADGES / STATUS TAGS
+   ============================================================ */
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: #003a80;
+    color: #fff;
+    border-radius: 4px;
+    font-size: .8rem;
+}
+
+/* ============================================================
+   ERROR & NOTICE
+   ============================================================ */
+.error {
+    color: #b40000;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+}
+
+.notice {
+    background: #e7f1ff;
+    padding: 10px;
+    border-left: 4px solid #1a73e8;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+/* ============================================================
+   DASHBOARD STATS BOXES (Mentor/Admin)
+   ============================================================ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 18px;
+    margin-bottom: 1.5rem;
+}
+
+.stat-box {
+    background: #f0f3f9;
+    border-radius: 8px;
+    padding: 14px;
     text-align: center;
 }
 
-.mt-2 { margin-top: 0.5rem; }
-.mt-3 { margin-top: 1rem; }
-.mt-4 { margin-top: 1.5rem; }
+.stat-box h3 {
+    font-size: 26px;
+    margin-bottom: 5px;
+    color: #003a80;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+    background: #ffffff;
+    border-top: 1px solid #dde1e7;
+    padding: 1rem 0;
+    text-align: center;
+    font-size: .9rem;
+    color: #565656;
+    margin-top: auto;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 600px) {
+    .nav-links {
+        gap: 0.8rem;
+    }
+
+    .card {
+        padding: 1.2rem;
+    }
+
+    .stat-box h3 {
+        font-size: 22px;
+    }
+}

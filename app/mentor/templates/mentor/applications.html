@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>Assigned Applications</h2>
+
+    <table class="table">
+        <tr>
+            <th>Application</th>
+            <th>Student</th>
+            <th>Program</th>
+            <th></th>
+        </tr>
+
+        {% for a in apps %}
+        <tr>
+            <td>{{ a.application_id }}</td>
+            <td>{{ a.student_name }}</td>
+            <td>{{ a.program_title }}</td>
+            <td>
+                <a class="btn" href="{{ url_for('mentor.review_application', app_id=a.application_id) }}">
+                    Review
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

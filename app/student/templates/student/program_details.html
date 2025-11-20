@@ -3,20 +3,132 @@
 
 {% block content %}
 <div class="card">
+
     <h2>{{ program.title }}</h2>
 
     <p><strong>University:</strong> {{ program.university }}</p>
     <p><strong>Mentor:</strong> {{ program.mentor }}</p>
-    <p><strong>Duration:</strong> {{ program.duration }}</p>
-    <p><strong>Start:</strong> {{ program.start_date }}</p>
-    <p><strong>End:</strong> {{ program.end_date }}</p>
+    <p><strong>Duration:</strong> {{ program.duration or "–" }}</p>
+    <p><strong>Start:</strong> {{ program.start_date or "–" }}</p>
+    <p><strong>End:</strong> {{ program.end_date or "–" }}</p>
 
     <h3>Description</h3>
-    <p>{{ program.description }}</p>
+    <p>{{ program.description or "No description provided." }}</p>
 
     <h3>Eligibility</h3>
-    <p>{{ program.eligibility }}</p>
+    <p>{{ program.eligibility or "No eligibility criteria provided." }}</p>
 
-    <a class="btn" href="{{ url_for('student.apply', pid=pid) }}">Apply</a>
+    <hr>
+
+    {% if not applied %}
+        
+        <form action="{{ url_for('student.apply', pid=pid) }}">
+            <button class="btn-primary">Apply to Program</button>
+        </form>
+
+    {% else %}
+        
+        <div class="notice">
+            <strong>You have applied to this program.</strong>
+        </div>
+
+        
+        <h3>Required Documents</h3>
+
+        {% if requirements %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Document</th>
+                        <th>Status</th>
+                        <th>Upload</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requirements %}
+                        <tr>
+                            <td>{{ req.document_name }}</td>
+                            
+                            <td>
+                                {% set doc = documents.get(req.req_id) %}
+                                {% if doc %}
+                                    {{ doc.status }}
+                                {% else %}
+                                    Not Uploaded
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% set doc = documents.get(req.req_id) %}
+
+                                {% if not doc %}
+                                    
+                                    <form action="{{ url_for('student.upload_required_doc',
+                                                            pid=pid,
+                                                            app_id=app_id,
+                                                            req_id=req.req_id) }}"
+                                        method="POST"
+                                        enctype="multipart/form-data">
+                                        <input type="file" name="file" required>
+                                        <button class="btn">Upload</button>
+                                    </form>
+
+                                {% else %}
+                                    
+                                    <span class="badge">Uploaded</span>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No document requirements for this program.</p>
+        {% endif %}
+
+        <hr>
+
+        
+        <h3>Available Scholarships</h3>
+
+        {% if scholarships %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Scholarship</th>
+                        <th>Amount</th>
+                        <th>Apply</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in scholarships %}
+                    <tr>
+                        <td>{{ s.name }}</td>
+                        <td>{{ s.amount }}</td>
+                        <td>
+                            {% if s.scholarship_id in existing_scholarships %}
+                                <span class="badge">Applied</span>
+
+                            {% else %}
+                                <form method="POST"
+                                    action="{{ url_for('student.apply_scholarship',
+                                                        pid=pid,
+                                                        app_id=app_id,
+                                                        sid=s.scholarship_id) }}">
+                                    <button class="btn">Apply</button>
+                                </form>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p>No scholarships available for this program.</p>
+        {% endif %}
+    {% endif %}
+
 </div>
 {% endblock %}

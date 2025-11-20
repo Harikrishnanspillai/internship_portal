@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Student Applications{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Student Applications</h2>
+
+    {% if apps %}
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Student</th>
+            <th>Email</th>
+            <th>Program</th>
+            <th>Status</th>
+            <th>Review</th>
+        </tr>
+
+        {% for a in apps %}
+        <tr>
+            <td>{{ a.application_id }}</td>
+            <td>{{ a.student_name }}</td>
+            <td>{{ a.email }}</td>
+            <td>{{ a.program_title }}</td>
+            <td>{{ a.status }}</td>
+            <td>
+                <a class="btn" href="{{ url_for('mentor.review_application', app_id=a.application_id) }}">
+                    Open
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No applications yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

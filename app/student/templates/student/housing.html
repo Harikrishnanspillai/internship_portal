@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Housing{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Housing Status</h2>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if current %}
+        <p><strong>Location:</strong> {{ current.location }}</p>
+        <p><strong>Room Type:</strong> {{ current.room_type }}</p>
+        <p><strong>Rent:</strong> {{ current.rent }}</p>
+        <p><strong>Allotted:</strong> {{ current.allotment_date }}</p>
+
+        <form method="POST">
+            <input type="hidden" name="action" value="vacate">
+            <button class="btn del mt-2">Request to Vacate</button>
+        </form>
+
+    {% else %}
+        <p>No housing assigned.</p>
+
+        <form method="POST">
+            <input type="hidden" name="action" value="apply">
+            <button class="btn mt-2">Apply for Housing</button>
+        </form>
+    {% endif %}
+
+    <hr>
+
+    <h3>My Requests</h3>
+    {% if requests %}
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+            {% for r in requests %}
+                <tr>
+                    <td>{{ r.request_type }}</td>
+                    <td>{{ r.status }}</td>
+                    <td>{{ r.request_date }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No requests submitted.</p>
+    {% endif %}
+</div>
+{% endblock %}

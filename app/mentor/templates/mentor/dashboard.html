@@ -3,17 +3,80 @@
 
 {% block content %}
 <div class="card">
-    <h2>Welcome, {{ info.name }}</h2>
 
-    <p><strong>Department:</strong> {{ info.department }}</p>
+    <h2>Mentor Dashboard</h2>
+    <p>Welcome, {{ session['name'] }}</p>
 
-    <h3 class="mt-2">Overview</h3>
-    <p>Programs supervised: {{ program_count }}</p>
-    <p>Assigned students: {{ student_count }}</p>
+    <hr>
 
-    <div class="mt-2">
-        <a class="btn" href="{{ url_for('mentor.students') }}">Assigned Students</a>
-        <a class="btn" href="{{ url_for('mentor.profile') }}">Profile</a>
+    <!-- QUICK STATS -->
+    <div class="stats-grid">
+        <div class="stat-box">
+            <h3>{{ programs }}</h3>
+            <p>Programs Supervised</p>
+        </div>
+
+        <div class="stat-box">
+            <h3>{{ pending_docs }}</h3>
+            <p>Documents Pending Review</p>
+        </div>
+
+        <div class="stat-box">
+            <h3>{{ pending_sch }}</h3>
+            <p>Scholarship Requests</p>
+        </div>
     </div>
+
+    <hr>
+
+    <!-- NAVIGATION -->
+    <h3>Actions</h3>
+
+    <ul class="menu-list">
+        <li>
+            <a href="{{ url_for('mentor.student_applications') }}" class="btn">Review Student Applications</a>
+        </li>
+        <li>
+            <a href="{{ url_for('mentor.review_documents') }}" class="btn">Review Uploaded Documents</a>
+        </li>
+        <li>
+            <a href="{{ url_for('mentor.review_scholarships') }}" class="btn">Evaluate Scholarship Requests</a>
+        </li>
+        <li>
+            <a href="{{ url_for('mentor.assigned_students') }}" class="btn">View Assigned Students</a>
+        </li>
+    </ul>
+
 </div>
+
+<style>
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-box {
+    background: #f0f2f5;
+    padding: 14px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-box h3 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.menu-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.menu-list li {
+    margin: 10px 0;
+}
+</style>
+
 {% endblock %}

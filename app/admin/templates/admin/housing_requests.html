@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Housing Requests{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Housing Requests</h2>
+
+    <table>
+        <tr>
+            <th>Student</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+
+        {% for r in reqs %}
+        <tr>
+            <td>{{ r.student_name }}</td>
+            <td>{{ r.request_type }}</td>
+            <td>{{ r.status }}</td>
+            <td>{{ r.request_date }}</td>
+            <td>
+                {% if r.status == "Pending" %}
+                <form method="POST" action="{{ url_for('admin.decide_housing_request', req_id=r.request_id, action='approve') }}" style="display:inline;">
+                    <button class="btn">Approve</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.decide_housing_request', req_id=r.request_id, action='reject') }}" style="display:inline;">
+                    <button class="btn del">Reject</button>
+                </form>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

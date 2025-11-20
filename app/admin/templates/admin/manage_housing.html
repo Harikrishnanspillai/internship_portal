@@ -1,39 +1,75 @@
 {% extends "base.html" %}
-{% block title %}Manage Housing{% endblock %}
 {% block content %}
-<div class="card">
-  <h2>Housing Listings</h2>
 
-  <form method="POST" action="{{ url_for('admin.create_housing') }}">
-    <label>University ID</label><input type="number" name="university_id" required>
-    <label>Location</label><input type="text" name="location" required>
-    <label>Room Type</label><input type="text" name="room_type" required>
-    <label>Rent</label><input type="number" step="0.01" name="rent">
-    <button class="btn" type="submit">Create Listing</button>
-  </form>
+<h2>Housing Listings</h2>
 
-  <hr>
+<hr>
 
-  <table>
-    <tr><th>ID</th><th>University</th><th>Location</th><th>Type</th><th>Rent</th><th>Available</th><th></th></tr>
-    {% for h in houses %}
-    <tr>
-      <td>{{ h.housing_id }}</td>
-      <td>{{ h.university }}</td>
-      <td>{{ h.location }}</td>
-      <td>{{ h.room_type }}</td>
-      <td>{{ h.rent }}</td>
-      <td>{{ h.availability }}</td>
-      <td>
-        <!-- quick assign form -->
-        <form method="post" action="{{ url_for('admin.assign_housing') }}">
-          <input type="hidden" name="housing_id" value="{{ h.housing_id }}">
-          <input type="number" name="student_id" placeholder="student_id" required>
-          <button class="btn" type="submit">Assign</button>
-        </form>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-</div>
+<!-- Create New Housing Listing -->
+<form method="POST" action="{{ url_for('admin.create_housing') }}" class="form-section">
+
+    <div class="form-group">
+        <label>University ID</label>
+        <input type="number" name="university_id" required>
+    </div>
+
+    <div class="form-group">
+        <label>Location</label>
+        <input type="text" name="location" required>
+    </div>
+
+    <div class="form-group">
+        <label>Room Type</label>
+        <select name="room_type" required>
+            <option value="" disabled selected>Select Type</option>
+            <option value="Single">Single</option>
+            <option value="Double">Double</option>
+            <option value="Shared">Shared</option>
+            <option value="Studio">Studio</option>
+            <option value="Apartment">Apartment</option>
+            <option value="Dormitory">Dormitory</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Rent</label>
+        <input type="number" name="rent" step="0.01" placeholder="0.00">
+    </div>
+
+    <button type="submit" class="btn-primary">Create Listing</button>
+</form>
+
+<hr>
+
+<!-- Housing Table -->
+<h3>Existing Housing Units</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>University</th>
+            <th>Location</th>
+            <th>Type</th>
+            <th>Rent</th>
+            <th>Available</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for h in houses %}
+            <tr>
+                <td>{{ h.housing_id }}</td>
+                <td>{{ h.university }}</td>
+                <td>{{ h.location }}</td>
+                <td>{{ h.room_type }}</td>
+                <td>{{ h.rent }}</td>
+                <td>{{ "Yes" if h.availability else "No" }}</td>
+            </tr>
+        {% else %}
+            <tr><td colspan="6">No housing found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}

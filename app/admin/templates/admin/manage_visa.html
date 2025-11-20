@@ -1,29 +1,50 @@
 {% extends "base.html" %}
-{% block title %}Manage Visa{% endblock %}
+{% block title %}Manage Visa Applications{% endblock %}
+
 {% block content %}
 <div class="card">
-  <h2>Visa Applications</h2>
+    <h2>Visa Applications</h2>
 
-  <table>
-    <tr><th>ID</th><th>Student</th><th>Country</th><th>Status</th><th></th></tr>
-    {% for v in visas %}
-    <tr>
-      <td>{{ v.visa_id }}</td>
-      <td>{{ v.student_name }}</td>
-      <td>{{ v.country }}</td>
-      <td>{{ v.application_status }}</td>
-      <td>
-        <form method="post" action="{{ url_for('admin.decide_visa', vid=v.visa_id) }}" style="display:inline">
-          <input type="hidden" name="action" value="approve">
-          <button class="btn" type="submit">Approve</button>
-        </form>
-        <form method="post" action="{{ url_for('admin.decide_visa', vid=v.visa_id) }}" style="display:inline">
-          <input type="hidden" name="action" value="reject">
-          <button class="btn del" type="submit">Reject</button>
-        </form>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
+    <table>
+        <tr>
+            <th>Student</th>
+            <th>Country</th>
+            <th>Status</th>
+            <th>Issued</th>
+            <th>Expiry</th>
+            <th>Action</th>
+        </tr>
+
+        {% for v in visas %}
+        <tr>
+            <td>{{ v.student_name }}</td>
+            <td>{{ v.country }}</td>
+            <td>{{ v.application_status }}</td>
+            <td>{{ v.issued_date or '-' }}</td>
+            <td>{{ v.expiry_date or '-' }}</td>
+
+            <td>
+                {% if v.application_status == 'Pending' %}
+
+                    <form action="{{ url_for('admin.decide_visa', vid=v.visa_id, action='approve') }}"
+                          method="POST" style="display:inline;">
+                        <button class="btn">Approve</button>
+                    </form>
+
+                    <form action="{{ url_for('admin.decide_visa', vid=v.visa_id, action='reject') }}"
+                          method="POST" style="display:inline;">
+                        <button class="btn del">Reject</button>
+                    </form>
+
+                {% else %}
+
+                    <span class="badge">{{ v.application_status }}</span>
+
+                {% endif %}
+
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 </div>
 {% endblock %}

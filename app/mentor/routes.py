@@ -1,148 +1,302 @@
-# app/mentor/routes.py
-
-from flask import Blueprint, render_template, session, redirect, url_for, request
+from flask import Blueprint, render_template, session, redirect, url_for, request, send_from_directory
 from app.db import get_conn
 import psycopg2.extras
+import os
 
 mentor_bp = Blueprint(
-    'mentor',
+    "mentor",
     __name__,
-    template_folder='templates'
+    template_folder="templates"
 )
 
-# -------------------------
-# Mentor Dashboard
-# -------------------------
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "..", "static", "uploads")
+
+
+def guard():
+    return session.get("role") == "mentor"
+
+
+# ============================================================
+# MENTOR DASHBOARD
+# ============================================================
 @mentor_bp.route('/mentor/dashboard')
 def dashboard():
-    if session.get('role') != 'mentor':
-        return redirect(url_for('main.login'))
+    if not guard():
+        return redirect(url_for("main.login"))
 
-    mentor_id = session['user_id']
+    mentor_id = session["user_id"]
 
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    # Mentor info
-    cur.execute("""
-        SELECT name, department
-        FROM Mentor
-        WHERE mentor_id = %s
-    """, (mentor_id,))
-    info = cur.fetchone()
+    # Count programs assigned
+    cur.execute("SELECT COUNT(*) FROM Program WHERE mentor_id=%s", (mentor_id,))
+    program_count = cur.fetchone()[0]
 
-    # Count programs
+    # Count pending documents for review
     cur.execute("""
-        SELECT COUNT(*) AS count
-        FROM Program
-        WHERE mentor_id = %s
-    """, (mentor_id,))
-    program_count = cur.fetchone()["count"]
-
-    # Count students in those programs
-    cur.execute("""
-        SELECT COUNT(*) AS count
-        FROM Application a
+        SELECT COUNT(*)
+        FROM ApplicationDocument ad
+        JOIN Application a ON ad.application_id = a.application_id
         JOIN Program p ON a.program_id = p.program_id
-        WHERE p.mentor_id = %s
+        WHERE p.mentor_id=%s AND ad.status='Pending'
     """, (mentor_id,))
-    student_count = cur.fetchone()["count"]
+    pending_docs = cur.fetchone()[0]
+
+    # Count scholarship requests pending
+    cur.execute("""
+        SELECT COUNT(*)
+        FROM ScholarshipApplication sa
+        JOIN Application a ON sa.application_id = a.application_id
+        JOIN Program p ON a.program_id = p.program_id
+        WHERE p.mentor_id=%s AND sa.status='Pending'
+    """, (mentor_id,))
+    pending_sch = cur.fetchone()[0]
 
     cur.close()
     conn.close()
 
     return render_template(
-        'mentor/dashboard.html',
-        info=info,
-        program_count=program_count,
-        student_count=student_count
+        "mentor/dashboard.html",
+        programs=program_count,
+        pending_docs=pending_docs,
+        pending_sch=pending_sch
     )
 
 
-# -------------------------
-# Mentor Profile
-# -------------------------
-@mentor_bp.route('/mentor/profile')
-def profile():
-    if session.get('role') != 'mentor':
-        return redirect(url_for('main.login'))
+# ============================================================
+# VIEW ASSIGNED STUDENTS / APPLICATIONS
+# ============================================================
+@mentor_bp.route('/mentor/student_applications')
+def student_applications():
+    if not guard():
+        return redirect(url_for("main.login"))
 
-    mentor_id = session['user_id']
-
+    mentor_id = session["user_id"]
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     cur.execute("""
-        SELECT name, email, department
-        FROM Mentor
-        WHERE mentor_id = %s
+        SELECT a.application_id, s.student_id, s.name AS student_name,
+               s.email, p.title AS program_title, a.status
+        FROM Application a
+        JOIN Student s ON a.student_id = s.student_id
+        JOIN Program p ON a.program_id = p.program_id
+        WHERE p.mentor_id = %s
+        ORDER BY a.application_id DESC
     """, (mentor_id,))
-    data = cur.fetchone()
+    apps = cur.fetchall()
 
     cur.close()
     conn.close()
 
-    return render_template('mentor/profile.html', data=data)
+    return render_template("mentor/student_applications.html", apps=apps)
 
 
-# -------------------------
-# Mentor Profile Update
-# -------------------------
-@mentor_bp.route('/mentor/profile/update', methods=['POST'])
-def update_profile():
-    if session.get('role') != 'mentor':
-        return redirect(url_for('main.login'))
+# ============================================================
+# REVIEW DOCUMENTS FOR A SPECIFIC APPLICATION
+# ============================================================
+@mentor_bp.route('/mentor/application/<int:app_id>')
+def review_application(app_id):
+    if not guard():
+        return redirect(url_for("main.login"))
 
-    mentor_id = session['user_id']
+    mentor_id = session["user_id"]
 
-    name = request.form['name']
-    dept = request.form['department']
+    conn = get_conn()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    # verify mentor actually supervises this program
+    cur.execute("""
+        SELECT p.mentor_id, p.title, s.name AS student_name
+        FROM Application a
+        JOIN Program p ON a.program_id = p.program_id
+        JOIN Student s ON a.student_id = s.student_id
+        WHERE a.application_id=%s
+    """, (app_id,))
+    row = cur.fetchone()
+
+    if not row or row["mentor_id"] != mentor_id:
+        cur.close()
+        conn.close()
+        return "Unauthorized", 403
+
+    program_title = row["title"]
+    student_name = row["student_name"]
+
+    # fetch required documents
+    cur.execute("""
+        SELECT rd.req_id, rd.document_name,
+               ad.file_name, ad.status
+        FROM RequiredDocuments rd
+        LEFT JOIN ApplicationDocument ad
+        ON rd.req_id = ad.req_id AND ad.application_id=%s
+        WHERE rd.program_id = (
+            SELECT program_id FROM Application WHERE application_id=%s
+        )
+        ORDER BY rd.req_id
+    """, (app_id, app_id))
+    docs = cur.fetchall()
+
+    # scholarship requests
+    cur.execute("""
+        SELECT sa.sch_app_id, sa.status,
+               sc.name, sc.amount
+        FROM ScholarshipApplication sa
+        JOIN Scholarship sc ON sa.scholarship_id = sc.scholarship_id
+        WHERE sa.application_id=%s
+    """, (app_id,))
+    sch = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template(
+        "mentor/review_application.html",
+        app_id=app_id,
+        program_title=program_title,
+        student_name=student_name,
+        docs=docs,
+        sch=sch
+    )
+
+
+# ============================================================
+# APPROVE / REJECT DOCUMENT
+# ============================================================
+@mentor_bp.route('/mentor/document/<int:app_id>/<int:req_id>/<string:action>', methods=['POST'])
+def decide_document(app_id, req_id, action):
+    if not guard():
+        return redirect(url_for("main.login"))
+
+    if action not in ("approve", "reject"):
+        return redirect(url_for('mentor.review_application', app_id=app_id))
+
+    status = "Approved" if action == "approve" else "Rejected"
 
     conn = get_conn()
     cur = conn.cursor()
 
     cur.execute("""
-        UPDATE Mentor
-        SET name = %s, department = %s
-        WHERE mentor_id = %s
-    """, (name, dept, mentor_id))
+        UPDATE ApplicationDocument
+        SET status=%s
+        WHERE application_id=%s AND req_id=%s
+    """, (status, app_id, req_id))
 
     conn.commit()
     cur.close()
     conn.close()
 
-    return redirect(url_for('mentor.profile'))
+    return redirect(url_for('mentor.review_application', app_id=app_id))
 
 
-# -------------------------
-# Assigned Students
-# -------------------------
-@mentor_bp.route('/mentor/students')
-def students():
-    if session.get('role') != 'mentor':
-        return redirect(url_for('main.login'))
+# ============================================================
+# APPROVE / REJECT SCHOLARSHIP
+# ============================================================
+@mentor_bp.route('/mentor/scholarship/<int:sch_id>/<string:action>', methods=['POST'])
+def decide_scholarship(sch_id, action):
+    if not guard():
+        return redirect(url_for("main.login"))
 
-    mentor_id = session['user_id']
+    if action not in ("approve", "reject"):
+        return redirect(request.referrer)
+
+    status = "Approved" if action == "approve" else "Rejected"
+
+    conn = get_conn()
+    cur = conn.cursor()
+
+    cur.execute("""
+        UPDATE ScholarshipApplication
+        SET status=%s
+        WHERE sch_app_id=%s
+    """, (status, sch_id))
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(request.referrer)
+
+@mentor_bp.route('/mentor/review_documents')
+def review_documents():
+    if not guard():
+        return redirect(url_for("main.login"))
+
+    mentor_id = session["user_id"]
+    conn = get_conn()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    cur.execute("""
+        SELECT ad.application_id, ad.req_id, ad.file_name, ad.status,
+               rd.document_name,
+               s.name AS student_name, p.title AS program_title
+        FROM ApplicationDocument ad
+        JOIN RequiredDocuments rd ON ad.req_id = rd.req_id
+        JOIN Application a ON ad.application_id = a.application_id
+        JOIN Student s ON a.student_id = s.student_id
+        JOIN Program p ON a.program_id = p.program_id
+        WHERE p.mentor_id=%s
+        ORDER BY ad.status DESC, ad.application_id DESC
+    """, (mentor_id,))
+    docs = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template("mentor/review_documents.html", docs=docs)
+
+@mentor_bp.route('/mentor/review_scholarships')
+def review_scholarships():
+    if not guard():
+        return redirect(url_for("main.login"))
+
+    mentor_id = session["user_id"]
+    conn = get_conn()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    cur.execute("""
+        SELECT sa.sch_app_id, sa.status,
+               sc.name AS scholarship,
+               sc.amount,
+               s.name AS student_name,
+               p.title AS program_title
+        FROM ScholarshipApplication sa
+        JOIN Application a ON sa.application_id = a.application_id
+        JOIN Student s ON a.student_id = s.student_id
+        JOIN Program p ON a.program_id = p.program_id
+        JOIN Scholarship sc ON sa.scholarship_id = sc.scholarship_id
+        WHERE p.mentor_id=%s
+        ORDER BY sa.sch_app_id DESC
+    """, (mentor_id,))
+    sch = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template("mentor/review_scholarships.html", sch=sch)
+@mentor_bp.route('/mentor/assigned_students')
+def assigned_students():
+    if not guard():
+        return redirect(url_for("main.login"))
+
+    mentor_id = session["user_id"]
 
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     cur.execute("""
-        SELECT s.name AS student_name,
-               s.email AS student_email,
-               s.department AS student_dept,
-               p.title AS program_title,
-               a.status AS application_status
+        SELECT s.student_id, s.name, s.email, s.department,
+               p.title AS program_title
         FROM Application a
         JOIN Student s ON a.student_id = s.student_id
         JOIN Program p ON a.program_id = p.program_id
-        WHERE p.mentor_id = %s
-        ORDER BY p.title, s.name
+        WHERE p.mentor_id=%s
+        ORDER BY s.student_id
     """, (mentor_id,))
-
     students = cur.fetchall()
 
     cur.close()
     conn.close()
 
-    return render_template('mentor/students.html', students=students)
+    return render_template("mentor/assigned_students.html", students=students)

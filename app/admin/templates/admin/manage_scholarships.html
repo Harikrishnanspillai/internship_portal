@@ -1,29 +1,72 @@
 {% extends "base.html" %}
-{% block title %}Manage Visa{% endblock %}
 {% block content %}
-<div class="card">
-  <h2>Visa Applications</h2>
 
-  <table>
-    <tr><th>ID</th><th>Student</th><th>Country</th><th>Status</th><th></th></tr>
-    {% for v in visas %}
-    <tr>
-      <td>{{ v.visa_id }}</td>
-      <td>{{ v.student_name }}</td>
-      <td>{{ v.country }}</td>
-      <td>{{ v.application_status }}</td>
-      <td>
-        <form method="post" action="{{ url_for('admin.decide_visa', vid=v.visa_id) }}" style="display:inline">
-          <input type="hidden" name="action" value="approve">
-          <button class="btn" type="submit">Approve</button>
-        </form>
-        <form method="post" action="{{ url_for('admin.decide_visa', vid=v.visa_id) }}" style="display:inline">
-          <input type="hidden" name="action" value="reject">
-          <button class="btn del" type="submit">Reject</button>
-        </form>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-</div>
+<h2>Manage Scholarships</h2>
+<hr>
+
+<!-- Create New Scholarship -->
+<form method="POST" action="{{ url_for('admin.create_scholarship') }}" class="form-section">
+
+    <div class="form-group">
+        <label>Program ID</label>
+        <input type="number" name="program_id" required>
+    </div>
+
+    <div class="form-group">
+        <label>Scholarship Name</label>
+        <input type="text" name="name" required>
+    </div>
+
+    <div class="form-group">
+        <label>Amount</label>
+        <input type="number" step="0.01" name="amount">
+    </div>
+
+    <div class="form-group">
+        <label>Eligibility Criteria</label>
+        <textarea name="eligibility_criteria" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="btn-primary">Add Scholarship</button>
+</form>
+
+<hr>
+
+<h3>Existing Scholarships</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Scholarship</th>
+            <th>Amount</th>
+            <th>Program</th>
+            <th>Eligibility</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for s in scholarships %}
+        <tr>
+            <td>{{ s.scholarship_id }}</td>
+            <td>{{ s.name }}</td>
+            <td>{{ s.amount }}</td>
+            <td>{{ s.program_title }}</td>
+            <td>{{ s.eligibility_criteria or "-" }}</td>
+            <td>
+                <a href="{{ url_for('admin.delete_scholarship', sid=s.scholarship_id) }}"
+                   onclick="return confirm('Delete this scholarship?')">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6">No scholarships found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}
