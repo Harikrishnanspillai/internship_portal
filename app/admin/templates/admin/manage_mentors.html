@@ -60,7 +60,7 @@
             <td>{{ m.department }}</td>
             <td>{{ m.university }}</td>
             <td>
-                <a href="{{ url_for('admin.delete_mentor', mid=m.mentor_id) }}"
+                <a class="btn del" href="{{ url_for('admin.delete_mentor', mid=m.mentor_id) }}"
                    onclick="return confirm('Delete mentor {{ m.name }}?')">Delete</a>
             </td>
         </tr>

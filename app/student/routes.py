@@ -10,17 +10,17 @@ student_bp = Blueprint(
     template_folder='templates'
 )
 
-# -------------------------
-# FILE UPLOAD SETTINGS
-# -------------------------
+
+
+
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "..", "static", "uploads")
 ALLOWED_EXT = {"pdf", "doc", "docx", "jpg", "jpeg", "png"}
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
-# ============================================================
-# DASHBOARD
-# ============================================================
+
+
+
 @student_bp.route('/student/dashboard')
 def dashboard():
     if session.get('role') != 'student':
@@ -31,7 +31,7 @@ def dashboard():
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    # Basic info
+    
     cur.execute("""
         SELECT name, department, cgpa
         FROM Student
@@ -39,13 +39,13 @@ def dashboard():
     """, (student_id,))
     info = cur.fetchone()
 
-    # Application count
+    
     cur.execute("""
         SELECT COUNT(*) FROM Application WHERE student_id=%s
     """, (student_id,))
     app_count = cur.fetchone()[0]
 
-    # Documents summary
+    
     cur.execute("""
         SELECT 
             COUNT(*) AS total,
@@ -59,29 +59,29 @@ def dashboard():
     docs = cur.fetchone()
 
 
-    # Total visa applications
+    
     cur.execute("""
         SELECT COUNT(*) FROM VisaPermit WHERE student_id=%s
     """, (student_id,))
     visa_total = cur.fetchone()[0]
 
-    # Latest visa
+    
     cur.execute("""
         SELECT country, application_status, issued_date, expiry_date
         FROM VisaPermit
         WHERE student_id=%s
-        ORDER BY visa_id DESC LIMIT 1
+        ORDER BY visa_id ASC LIMIT 1
     """, (student_id,))
     visa = cur.fetchone()
 
-    # Housing assignment (latest active)
+    
     cur.execute("""
         SELECT h.location, h.room_type, h.rent,
                ha.allotment_date, ha.checkout_date
         FROM HousingAssignment ha
         JOIN Housing h ON ha.housing_id = h.housing_id
         WHERE ha.student_id=%s
-        ORDER BY ha.assign_id DESC LIMIT 1
+        ORDER BY ha.assign_id ASC LIMIT 1
     """, (student_id,))
     housing = cur.fetchone()
 
@@ -99,9 +99,9 @@ def dashboard():
     )
 
 
-# ============================================================
-# PROFILE VIEW + UPDATE
-# ============================================================
+
+
+
 @student_bp.route('/student/profile')
 def profile():
     if session.get('role') != 'student':
@@ -149,9 +149,9 @@ def update_profile():
     return redirect(url_for('student.profile'))
 
 
-# ============================================================
-# VIEW PROGRAMS
-# ============================================================
+
+
+
 @student_bp.route('/student/programs')
 def programs():
     if session.get('role') != 'student':
@@ -184,7 +184,7 @@ def program_details(pid):
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    # load program info
+    
     cur.execute("""
         SELECT p.*, u.name AS university, m.name AS mentor
         FROM Program p
@@ -194,7 +194,7 @@ def program_details(pid):
     """, (pid,))
     program = cur.fetchone()
 
-    # check application
+    
     cur.execute("""
         SELECT application_id FROM Application 
         WHERE student_id=%s AND program_id=%s
@@ -208,7 +208,7 @@ def program_details(pid):
     documents = {}
 
     if applied:
-        # load requirements
+        
         cur.execute("""
             SELECT req_id, document_name
             FROM RequiredDocuments
@@ -216,7 +216,7 @@ def program_details(pid):
         """, (pid,))
         requirements = cur.fetchall()
 
-        # load uploaded documents
+        
         cur.execute("""
             SELECT req_id, file_name, status
             FROM ApplicationDocument
@@ -225,7 +225,7 @@ def program_details(pid):
         for row in cur.fetchall():
             documents[row["req_id"]] = row
 
-    # scholarships
+    
     cur.execute("""
         SELECT scholarship_id, name, amount, eligibility_criteria
         FROM Scholarship
@@ -257,7 +257,7 @@ def apply(pid):
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    # check if already applied
+    
     cur.execute("""
         SELECT application_id
         FROM Application
@@ -265,7 +265,7 @@ def apply(pid):
     """, (student_id, pid))
     exists = cur.fetchone()
 
-    # create application if missing
+    
     if not exists:
         cur.execute("""
             INSERT INTO Application (student_id, program_id)
@@ -280,9 +280,9 @@ def apply(pid):
 
 
 
-# ============================================================
-# DOCUMENT UPLOADS
-# ============================================================
+
+
+
 
 @student_bp.route('/student/program/<int:pid>/upload/<int:app_id>/<int:req_id>', methods=['POST'])
 def upload_required_doc(pid, app_id, req_id):
@@ -305,7 +305,7 @@ def upload_required_doc(pid, app_id, req_id):
     conn = get_conn()
     cur = conn.cursor()
 
-    # either insert new or overwrite
+    
     cur.execute("""
         INSERT INTO ApplicationDocument (application_id, req_id, file_name)
         VALUES (%s, %s, %s)
@@ -320,9 +320,9 @@ def upload_required_doc(pid, app_id, req_id):
 
     return redirect(url_for('student.program_details', pid=pid))
 
-# ============================================================
-# VISA APPLICATIONS
-# ============================================================
+
+
+
 @student_bp.route('/student/visa', methods=['GET', 'POST'])
 def visa_applications():
     if session.get('role') != 'student':
@@ -333,7 +333,7 @@ def visa_applications():
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    # fetch valid visa countries from programs offered
+    
     cur.execute("""
         SELECT DISTINCT u.country
         FROM Program p
@@ -359,12 +359,12 @@ def visa_applications():
         """, (student_id, country))
         conn.commit()
 
-    # fetch student visa history
+    
     cur.execute("""
         SELECT visa_id, country, application_status, issued_date, expiry_date
         FROM VisaPermit
         WHERE student_id = %s
-        ORDER BY visa_id DESC
+        ORDER BY visa_id ASC
     """, (student_id,))
     visas = cur.fetchall()
 
@@ -379,9 +379,9 @@ def visa_applications():
 
 
 
-# ============================================================
-# HOUSING (Student Requests + View Assignment)
-# ============================================================
+
+
+
 @student_bp.route('/student/housing', methods=['GET', 'POST'])
 def housing():
     if session.get('role') != 'student':
@@ -392,23 +392,23 @@ def housing():
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    # Current active housing (if any)
+    
     cur.execute("""
         SELECT h.location, h.room_type, h.rent,
                ha.allotment_date, ha.checkout_date
         FROM HousingAssignment ha
         JOIN Housing h ON ha.housing_id=h.housing_id
         WHERE ha.student_id=%s AND ha.checkout_date IS NULL
-        ORDER BY ha.assign_id DESC LIMIT 1
+        ORDER BY ha.assign_id ASC LIMIT 1
     """, (student_id,))
     current = cur.fetchone()
 
-    # Student's request history
+    
     cur.execute("""
         SELECT request_id, request_type, status, request_date
         FROM HousingRequest
         WHERE student_id=%s
-        ORDER BY request_date DESC
+        ORDER BY request_date ASC
     """, (student_id,))
     requests = cur.fetchall()
 
@@ -440,7 +440,7 @@ def housing():
             SELECT request_id, request_type, status, request_date
             FROM HousingRequest
             WHERE student_id=%s
-            ORDER BY request_date DESC
+            ORDER BY request_date ASC
         """, (student_id,))
         requests = cur.fetchall()
 
@@ -469,5 +469,5 @@ def apply_scholarship(app_id, sid):
     cur.close()
     conn.close()
 
-    # must redirect using program_id
+    
     return redirect(request.referrer)

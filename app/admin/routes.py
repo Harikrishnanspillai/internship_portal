@@ -196,7 +196,7 @@ def manage_scholarships():
             p.title AS program_title
         FROM Scholarship s
         JOIN Program p ON s.program_id = p.program_id
-        ORDER BY s.scholarship_id DESC;
+        ORDER BY s.scholarship_id ASC;
     """)
     scholarships = cur.fetchall()
 
@@ -260,7 +260,7 @@ def manage_visa():
                v.country, v.application_status, v.issued_date, v.expiry_date
         FROM VisaPermit v
         JOIN Student s ON v.student_id = s.student_id
-        ORDER BY v.visa_id DESC
+        ORDER BY v.visa_id ASC
     """)
     visas = cur.fetchall()
 
@@ -317,7 +317,7 @@ def manage_housing():
                h.room_type, h.rent, h.availability
         FROM Housing h
         LEFT JOIN University u ON h.university_id = u.university_id
-        ORDER BY h.housing_id DESC
+        ORDER BY h.housing_id ASC
     """)
     houses = cur.fetchall()
 
@@ -366,7 +366,7 @@ def housing_requests():
                s.student_id, s.name AS student_name
         FROM HousingRequest hr
         JOIN Student s ON hr.student_id = s.student_id
-        ORDER BY hr.request_date DESC
+        ORDER BY hr.request_date ASC
     """)
     reqs = cur.fetchall()
 
@@ -439,7 +439,7 @@ def decide_housing_request(req_id, action):
             WHERE housing_id IN (
                 SELECT housing_id FROM HousingAssignment
                 WHERE student_id=%s
-                ORDER BY assign_id DESC LIMIT 1
+                ORDER BY assign_id ASC LIMIT 1
             )
         """, (student_id,))
 
@@ -451,7 +451,21 @@ def decide_housing_request(req_id, action):
 
     return redirect(url_for('admin.housing_requests'))
 
+@admin_bp.route("/admin/universities/delete/<int:hid>")
+def delete_housing(hid):
+    if not guard():
+        return redirect(url_for("main.login"))
 
+    conn = get_conn()
+    cur = conn.cursor()
+
+    cur.execute("DELETE FROM Housing WHERE housing_id=%s", (hid,))
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('admin.manage_housing'))
 
 
 @admin_bp.route("/admin/universities")
@@ -677,7 +691,7 @@ def manage_scholarship_applications():
         JOIN Student s ON a.student_id = s.student_id
         JOIN Program p ON a.program_id = p.program_id
         JOIN Scholarship sc ON sa.scholarship_id = sc.scholarship_id
-        ORDER BY sa.sch_app_id DESC
+        ORDER BY sa.sch_app_id ASC
     """)
 
     data = cur.fetchall()

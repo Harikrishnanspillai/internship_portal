@@ -83,7 +83,7 @@ def student_applications():
         JOIN Student s ON a.student_id = s.student_id
         JOIN Program p ON a.program_id = p.program_id
         WHERE p.mentor_id = %s
-        ORDER BY a.application_id DESC
+        ORDER BY a.application_id ASC
     """, (mentor_id,))
     apps = cur.fetchall()
 
@@ -177,20 +177,53 @@ def decide_document(app_id, req_id, action):
     conn = get_conn()
     cur = conn.cursor()
 
+    # Update the selected document
     cur.execute("""
         UPDATE ApplicationDocument
         SET status=%s
         WHERE application_id=%s AND req_id=%s
     """, (status, app_id, req_id))
 
+    # -------- AUTO APPROVAL LOGIC --------
+    # Count approved and total documents
+    cur.execute("""
+        SELECT 
+            SUM(CASE WHEN status = 'Approved' THEN 1 END) AS approved_count,
+            COUNT(*) AS total_count
+        FROM ApplicationDocument
+        WHERE application_id = %s
+    """, (app_id,))
+    approved_count, total_count = cur.fetchone()
+
+    # If all documents are approved → approve the application
+    if approved_count == total_count and total_count > 0:
+        cur.execute("""
+            UPDATE Application
+            SET status = 'Approved'
+            WHERE application_id = %s
+        """, (app_id,))
+    else:
+        # If ANY document is rejected → application rejected
+        cur.execute("""
+            SELECT COUNT(*) FROM ApplicationDocument
+            WHERE application_id=%s AND status='Rejected'
+        """, (app_id,))
+        rejected_count = cur.fetchone()[0]
+
+        if rejected_count > 0:
+            cur.execute("""
+                UPDATE Application
+                SET status = 'Rejected'
+                WHERE application_id = %s
+            """, (app_id,))
+
+    # -------------------------------------
+
     conn.commit()
     cur.close()
     conn.close()
 
     return redirect(url_for('mentor.review_application', app_id=app_id))
-
-
-
 
 
 @mentor_bp.route('/mentor/scholarship/<int:sch_id>/<string:action>', methods=['POST'])
@@ -237,7 +270,7 @@ def review_documents():
         JOIN Student s ON a.student_id = s.student_id
         JOIN Program p ON a.program_id = p.program_id
         WHERE p.mentor_id=%s
-        ORDER BY ad.status DESC, ad.application_id DESC
+        ORDER BY ad.status ASC, ad.application_id ASC
     """, (mentor_id,))
     docs = cur.fetchall()
 
@@ -267,7 +300,7 @@ def review_scholarships():
         JOIN Program p ON a.program_id = p.program_id
         JOIN Scholarship sc ON sa.scholarship_id = sc.scholarship_id
         WHERE p.mentor_id=%s
-        ORDER BY sa.sch_app_id DESC
+        ORDER BY sa.sch_app_id ASC
     """, (mentor_id,))
     sch = cur.fetchall()
 
