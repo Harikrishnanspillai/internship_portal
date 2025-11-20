@@ -11,21 +11,21 @@ def index():
 
 @main_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    # Student signup only (adjust if you want mentor/admin signup flow later)
+    
     if request.method == 'POST':
         name = request.form.get('name', '').strip()
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
         confirm = request.form.get('confirm', '')
 
-        # basic validation
+        
         if not name or not email or not password:
             return render_template('main/signup.html', error="All fields are required.", form=request.form)
 
         if password != confirm:
             return render_template('main/signup.html', error="Passwords do not match.", form=request.form)
 
-        pw_hash = generate_password_hash(password)  # werkzeug default (pbkdf2:sha256)
+        pw_hash = generate_password_hash(password)  
 
         conn = get_conn()
         cur = conn.cursor()
@@ -52,7 +52,7 @@ def signup():
         cur.close()
         conn.close()
 
-        # redirect to login after successful signup
+        
         return redirect(url_for('main.login'))
 
     return render_template('main/signup.html')
@@ -70,7 +70,7 @@ def login():
         conn = get_conn()
         cur = conn.cursor()
 
-        # Try Student
+        
         cur.execute("SELECT student_id, name, password FROM Student WHERE email = %s", (email,))
         user = cur.fetchone()
         if user:
@@ -88,7 +88,7 @@ def login():
                 conn.close()
                 return render_template('main/login.html', error="Invalid credentials.", form=request.form)
 
-        # Try Mentor
+        
         cur.execute("SELECT mentor_id, name, password FROM Mentor WHERE email = %s", (email,))
         m = cur.fetchone()
         if m:
@@ -106,7 +106,7 @@ def login():
                 conn.close()
                 return render_template('main/login.html', error="Invalid credentials.", form=request.form)
 
-        # Try Admin
+        
         cur.execute("SELECT admin_id, name, password FROM Admin WHERE email = %s", (email,))
         a = cur.fetchone()
         cur.close()
@@ -122,7 +122,7 @@ def login():
             else:
                 return render_template('main/login.html', error="Invalid credentials.", form=request.form)
 
-        # If not found in any table
+        
         return render_template('main/login.html', error="No account with that email.", form=request.form)
 
     return render_template('main/login.html')

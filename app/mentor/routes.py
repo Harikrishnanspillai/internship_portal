@@ -16,9 +16,9 @@ def guard():
     return session.get("role") == "mentor"
 
 
-# ============================================================
-# MENTOR DASHBOARD
-# ============================================================
+
+
+
 @mentor_bp.route('/mentor/dashboard')
 def dashboard():
     if not guard():
@@ -29,11 +29,11 @@ def dashboard():
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    # Count programs assigned
+    
     cur.execute("SELECT COUNT(*) FROM Program WHERE mentor_id=%s", (mentor_id,))
     program_count = cur.fetchone()[0]
 
-    # Count pending documents for review
+    
     cur.execute("""
         SELECT COUNT(*)
         FROM ApplicationDocument ad
@@ -43,7 +43,7 @@ def dashboard():
     """, (mentor_id,))
     pending_docs = cur.fetchone()[0]
 
-    # Count scholarship requests pending
+    
     cur.execute("""
         SELECT COUNT(*)
         FROM ScholarshipApplication sa
@@ -64,9 +64,9 @@ def dashboard():
     )
 
 
-# ============================================================
-# VIEW ASSIGNED STUDENTS / APPLICATIONS
-# ============================================================
+
+
+
 @mentor_bp.route('/mentor/student_applications')
 def student_applications():
     if not guard():
@@ -93,9 +93,9 @@ def student_applications():
     return render_template("mentor/student_applications.html", apps=apps)
 
 
-# ============================================================
-# REVIEW DOCUMENTS FOR A SPECIFIC APPLICATION
-# ============================================================
+
+
+
 @mentor_bp.route('/mentor/application/<int:app_id>')
 def review_application(app_id):
     if not guard():
@@ -106,7 +106,7 @@ def review_application(app_id):
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    # verify mentor actually supervises this program
+    
     cur.execute("""
         SELECT p.mentor_id, p.title, s.name AS student_name
         FROM Application a
@@ -124,7 +124,7 @@ def review_application(app_id):
     program_title = row["title"]
     student_name = row["student_name"]
 
-    # fetch required documents
+    
     cur.execute("""
         SELECT rd.req_id, rd.document_name,
                ad.file_name, ad.status
@@ -138,7 +138,7 @@ def review_application(app_id):
     """, (app_id, app_id))
     docs = cur.fetchall()
 
-    # scholarship requests
+    
     cur.execute("""
         SELECT sa.sch_app_id, sa.status,
                sc.name, sc.amount
@@ -161,9 +161,9 @@ def review_application(app_id):
     )
 
 
-# ============================================================
-# APPROVE / REJECT DOCUMENT
-# ============================================================
+
+
+
 @mentor_bp.route('/mentor/document/<int:app_id>/<int:req_id>/<string:action>', methods=['POST'])
 def decide_document(app_id, req_id, action):
     if not guard():
@@ -190,9 +190,9 @@ def decide_document(app_id, req_id, action):
     return redirect(url_for('mentor.review_application', app_id=app_id))
 
 
-# ============================================================
-# APPROVE / REJECT SCHOLARSHIP
-# ============================================================
+
+
+
 @mentor_bp.route('/mentor/scholarship/<int:sch_id>/<string:action>', methods=['POST'])
 def decide_scholarship(sch_id, action):
     if not guard():
@@ -286,7 +286,7 @@ def assigned_students():
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     cur.execute("""
-        SELECT s.student_id, s.name, s.email, s.department,
+        SELECT s.student_id, s.name, s.email, s.department, s.cgpa,
                p.title AS program_title
         FROM Application a
         JOIN Student s ON a.student_id = s.student_id

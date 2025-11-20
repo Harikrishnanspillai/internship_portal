@@ -227,7 +227,7 @@ def program_details(pid):
 
     # scholarships
     cur.execute("""
-        SELECT scholarship_id, name, amount
+        SELECT scholarship_id, name, amount, eligibility_criteria
         FROM Scholarship
         WHERE program_id=%s
     """, (pid,))

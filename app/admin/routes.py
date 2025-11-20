@@ -10,9 +10,9 @@ def guard():
     return session.get("role") == "admin"
 
 
-# -------------------------
-# DASHBOARD
-# -------------------------
+
+
+
 @admin_bp.route("/admin/dashboard")
 def dashboard():
     if not guard():
@@ -61,9 +61,9 @@ def dashboard():
     )
 
 
-# -------------------------
-# MANAGE STUDENTS
-# -------------------------
+
+
+
 @admin_bp.route("/admin/students")
 def manage_students():
     if not guard():
@@ -95,9 +95,9 @@ def delete_student(sid):
     return redirect(url_for("admin.manage_students"))
 
 
-# -------------------------
-# MANAGE PROGRAMS
-# -------------------------
+
+
+
 @admin_bp.route("/admin/programs")
 def manage_programs():
     if not guard():
@@ -177,9 +177,9 @@ def delete_program(pid):
     return redirect(url_for("admin.manage_programs"))
 
 
-# -------------------------
-# MANAGE SCHOLARSHIPS
-# -------------------------
+
+
+
 @admin_bp.route('/admin/scholarships')
 def manage_scholarships():
     if not guard():
@@ -245,9 +245,9 @@ def delete_scholarship(sid):
     return redirect(url_for('admin.manage_scholarships'))
 
 
-# -------------------------
-# MANAGE VISA
-# -------------------------
+
+
+
 @admin_bp.route('/admin/visa')
 def manage_visa():
     if not guard():
@@ -302,9 +302,9 @@ def decide_visa(vid, action):
     return redirect(url_for('admin.manage_visa'))
 
 
-# -------------------------
-# MANAGE HOUSING (LIST + CREATE)
-# -------------------------
+
+
+
 @admin_bp.route('/admin/housing')
 def manage_housing():
     if not guard():
@@ -350,9 +350,9 @@ def create_housing():
     return redirect(url_for('admin.manage_housing'))
 
 
-# -------------------------
-# HOUSING REQUEST WORKFLOW
-# -------------------------
+
+
+
 @admin_bp.route('/admin/housing/requests')
 def housing_requests():
     if not guard():
@@ -451,9 +451,9 @@ def decide_housing_request(req_id, action):
 
     return redirect(url_for('admin.housing_requests'))
 
-# -------------------------
-# MANAGE UNIVERSITIES
-# -------------------------
+
+
+
 @admin_bp.route("/admin/universities")
 def manage_universities():
     if not guard():
@@ -516,9 +516,9 @@ def delete_university(uid):
 
     return redirect(url_for('admin.manage_universities'))
 
-# -------------------------
-# MANAGE MENTORS
-# -------------------------
+
+
+
 @admin_bp.route("/admin/mentors")
 def manage_mentors():
     if not guard():
@@ -583,9 +583,9 @@ def delete_mentor(mid):
 
     return redirect(url_for('admin.manage_mentors'))
 
-# ============================================================
-# MANAGE PROGRAM REQUIREMENTS
-# ============================================================
+
+
+
 
 @admin_bp.route("/admin/requirements/<int:pid>")
 def manage_requirements(pid):
@@ -595,11 +595,11 @@ def manage_requirements(pid):
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    # Program info for header
+    
     cur.execute("SELECT title FROM Program WHERE program_id=%s", (pid,))
     program = cur.fetchone()
 
-    # Existing requirements
+    
     cur.execute("""
         SELECT req_id, document_name
         FROM RequiredDocuments
@@ -656,9 +656,9 @@ def delete_requirement(pid, req_id):
 
     return redirect(url_for("admin.manage_requirements", pid=pid))
 
-# ----------------------------------
-# MANAGE SCHOLARSHIP APPLICATIONS
-# ----------------------------------
+
+
+
 @admin_bp.route("/admin/scholarship_applications")
 def manage_scholarship_applications():
     if not guard():

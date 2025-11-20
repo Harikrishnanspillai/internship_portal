@@ -97,6 +97,7 @@
                     <tr>
                         <th>Scholarship</th>
                         <th>Amount</th>
+                        <th>Eligibility criteria</th>
                         <th>Apply</th>
                     </tr>
                 </thead>
@@ -105,6 +106,7 @@
                     <tr>
                         <td>{{ s.name }}</td>
                         <td>{{ s.amount }}</td>
+                        <td>{{ s.eligibility_criteria }}</td>
                         <td>
                             {% if s.scholarship_id in existing_scholarships %}
                                 <span class="badge">Applied</span>
