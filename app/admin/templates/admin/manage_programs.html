@@ -92,7 +92,7 @@
                 </a>
             </td>
             <td>
-                <a href="{{ url_for('admin.delete_program', pid=p.program_id) }}"
+                <a class="btn del"href="{{ url_for('admin.delete_program', pid=p.program_id) }}"
                    onclick="return confirm('Delete this program?')">
                     Delete
                 </a>
